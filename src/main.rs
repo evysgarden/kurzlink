@@ -27,6 +27,11 @@ fn main() -> anyhow::Result<()> {
                 .help("generate a vanitymap at <VALUE>"),
         )
         .arg(
+            arg!(-r --redirectfile <VALUE>)
+                .default_value(None)
+                .help("generate a redirectfile at <VALUE>"),
+        )
+        .arg(
             arg!(-o --output <VALUE>)
                 .default_value("output")
                 .help("the base directory to populate"),
@@ -49,6 +54,7 @@ fn main() -> anyhow::Result<()> {
     let generate_flag = matches.get_one::<bool>("generate").unwrap();
     let output_path = matches.get_one::<String>("output").unwrap();
     let vanity_opt_path = matches.get_one::<String>("vanitymap");
+    let redirect_opt_path = matches.get_one::<String>("redirectfile");
 
     // get the links
     let mut config = Config::new(config_file)
@@ -77,6 +83,12 @@ fn main() -> anyhow::Result<()> {
         config
             .write_vanity(vanity_path)
             .with_context(|| "Writing the vanitymap failed".to_string())?;
+    };
+
+    if let Some(redirect_path) = redirect_opt_path {
+        config
+            .write_redirect_list(redirect_path)
+            .with_context(|| "Writing the rewrite list failed".to_string())?;
     };
     anyhow::Ok(())
 }
