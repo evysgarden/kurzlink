@@ -10,7 +10,6 @@ mod error;
 mod utils;
 
 #[rustfmt::skip::macros(arg)]
-
 fn main() -> anyhow::Result<()> {
     let matches = command!()
         .arg(
