@@ -33,8 +33,6 @@ build-nix:
     - nix --extra-experimental-features "nix-command flakes" build
 
 docker:deploy:
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   stage: deploy
   image: docker:latest
   cache:
@@ -47,4 +45,8 @@ docker:deploy:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     - docker build --pull --tag $CI_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_SHA --tag $CI_REGISTRY/$CI_PROJECT_PATH:latest .
-    - docker push $CI_REGISTRY/$CI_PROJECT_PATH:latest
+    - docker push $CI_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_SHA
+    - |
+      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+        docker push $CI_REGISTRY/$CI_PROJECT_PATH:latest
+      fi
