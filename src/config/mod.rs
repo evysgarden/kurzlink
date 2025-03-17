@@ -125,4 +125,22 @@ impl Config {
 
         Ok(())
     }
+
+    pub fn write_redirect_list(&self, rewrite_path: impl AsRef<Path>) -> anyhow::Result<()> {
+        let mut file_content = String::from("");
+
+        if let Some(index) = &self.index {
+            file_content += format!("/ {} 302\n", index.inner()).as_str();
+        }
+
+        for shortlink in &self.shortlinks {
+            for link in shortlink.sources.iter() {
+                file_content += format!("/{} {} 302\n", link.inner(), shortlink.destination.inner()).as_str();
+            }
+        }
+
+        fs::write(rewrite_path, file_content)?;
+
+        Ok(())
+    }
 }
