@@ -135,7 +135,8 @@ impl Config {
 
         for shortlink in &self.shortlinks {
             for link in shortlink.sources.iter() {
-                file_content += format!("/{} {} 302\n", link.inner(), shortlink.destination.inner()).as_str();
+                file_content +=
+                    format!("/{} {} 302\n", link.inner(), shortlink.destination.inner()).as_str();
             }
         }
 
